@@ -29,5 +29,5 @@ CVM Server
 | **api/**               | Maps HTTP → DTOs → Application services. No business logic here.    |
 | **application/**       | Coordinates use cases, calls domain/repo methods. Stateless.        |
 | **domain/entity/**     | Rich domain models (e.g., `User` with methods like `SetPassword`)   |
-| **domain/repository/** | Interface definitions only (e.g., `UserRepository`)                 |
+| **domain/repository/** | Interface definitions only (e.g., `IReposUserMode`)                 |
 | **infra/**             | Postgres, JWT, logging, etc. Implements repo and service interfaces |

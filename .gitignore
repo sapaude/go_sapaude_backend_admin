@@ -5,3 +5,4 @@ bin/
 *.out
 coverage.out
 .idea
+.DS_Store

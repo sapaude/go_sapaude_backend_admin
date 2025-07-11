@@ -5,15 +5,22 @@ import (
     "time"
 
     "github.com/golang-jwt/jwt/v5"
+    "github.com/sapaude/go_sapaude_backend_admin/conf"
 )
 
-type jwtService struct {
+// JWTInfra JWT认证设施
+type JWTInfra struct {
     secretKey     string
     tokenDuration time.Duration
 }
 
-func NewJWTService(secret string, duration time.Duration) *jwtService {
-    return &jwtService{
+func NewJWTInfra() *JWTInfra {
+
+    jwtCfg := conf.AppConfig.JWT
+    secret := jwtCfg.Secret
+    duration := time.Duration(jwtCfg.ExpirationMinutes * 60)
+
+    return &JWTInfra{
         secretKey:     secret,
         tokenDuration: duration,
     }
@@ -25,7 +32,7 @@ type Claims struct {
     jwt.RegisteredClaims
 }
 
-func (j *jwtService) GenerateToken(userID string, role string) (string, error) {
+func (j *JWTInfra) GenerateToken(userID string, role string) (string, error) {
     claims := &Claims{
         UserID: userID,
         Role:   role,
@@ -39,7 +46,7 @@ func (j *jwtService) GenerateToken(userID string, role string) (string, error) {
     return token.SignedString([]byte(j.secretKey))
 }
 
-func (j *jwtService) ValidateToken(tokenStr string) (string, string, error) {
+func (j *JWTInfra) ValidateToken(tokenStr string) (string, string, error) {
     token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
         return []byte(j.secretKey), nil
     })

@@ -3,30 +3,23 @@ package main
 import (
     "strconv"
 
-    "github.com/labstack/echo/v4"
-    "github.com/lupguo/go_sapaude_backend_admin/conf"
-    "github.com/lupguo/go_sapaude_backend_admin/infra/logger"
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm"
+    "github.com/sapaude/go-shims/x/log"
+    "github.com/sapaude/go_sapaude_backend_admin/conf"
+    "github.com/sapaude/go_sapaude_backend_admin/routes"
 )
 
 func main() {
-    log.InitLogger()
-    log := log.Log
-
     if err := conf.LoadConfig("conf/app.yml", "conf/route.yml"); err != nil {
         log.Fatalf("config load error: %v", err)
     }
 
-    var app *echo.Echo
-    app, err := di.InitApp(conf.AppConfig, dbConn)
-    if err != nil {
-        log.Fatalf("wire init error: %v", err)
-    }
+    // 创建Echo服务
+    server := routes.NewEchoServer(InitBackendAdminImpl())
 
+    // 启动服务
     addr := ":" + strconv.Itoa(conf.AppConfig.Server.Port)
     log.Infof("Starting server at %s", addr)
-    if err := app.Start(addr); err != nil {
+    if err := server.Start(addr); err != nil {
         log.Fatalf("server error: %v", err)
     }
 }

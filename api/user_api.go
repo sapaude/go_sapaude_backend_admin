@@ -2,21 +2,24 @@ package api
 
 import (
     "net/http"
+    "strconv"
 
     "github.com/labstack/echo/v4"
-    "github.com/lupguo/go_sapaude_backend_admin/application"
+    "github.com/sapaude/go_sapaude_backend_admin/application"
+    "github.com/sapaude/go_sapaude_backend_admin/domain/entity"
 )
 
-type UserHandler struct {
-    UserService *application.UserService
+type UserAPI struct {
+    userApp    *application.UserApp
+    crontabApp *application.CrontabTaskApp
 }
 
-func NewUserHandler(svc *application.UserService) *UserHandler {
-    return &UserHandler{UserService: svc}
+func NewUserAPI(userApp *application.UserApp, crontabApp *application.CrontabTaskApp) *UserAPI {
+    return &UserAPI{userApp: userApp, crontabApp: crontabApp}
 }
 
 // Login POST /login
-func (h *UserHandler) Login(c echo.Context) error {
+func (h *UserAPI) Login(c echo.Context) error {
     var req struct {
         Email    string `json:"email"`
         Password string `json:"password"`
@@ -25,7 +28,7 @@ func (h *UserHandler) Login(c echo.Context) error {
         return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
     }
 
-    token, err := h.UserService.Login(c.Request().Context(), req.Email, req.Password)
+    token, err := h.userApp.Login(c.Request().Context(), req.Email, req.Password)
     if err != nil {
         return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
     }
@@ -34,7 +37,7 @@ func (h *UserHandler) Login(c echo.Context) error {
 }
 
 // CreateUser POST /users
-func (h *UserHandler) CreateUser(c echo.Context) error {
+func (h *UserAPI) CreateUser(c echo.Context) error {
     var req struct {
         Email    string `json:"email"`
         Password string `json:"password"`
@@ -43,7 +46,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
         return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
     }
 
-    user, err := h.UserService.CreateUser(c.Request().Context(), req.Email, req.Password)
+    user, err := h.userApp.CreateUser(c.Request().Context(), req.Email, req.Password)
     if err != nil {
         return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
@@ -51,8 +54,11 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 }
 
 // ListUsers GET /users
-func (h *UserHandler) ListUsers(c echo.Context) error {
-    users, err := h.UserService.ListUsers(c.Request().Context())
+func (h *UserAPI) ListUsers(c echo.Context) error {
+    users, err := h.userApp.ListUsers(c.Request().Context(), &entity.PageSetting{
+        PageNum:  0,
+        PageSize: 10,
+    })
     if err != nil {
         return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
@@ -60,9 +66,11 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 }
 
 // DeactivateUser DELETE /users/:id
-func (h *UserHandler) DeactivateUser(c echo.Context) error {
-    id := c.Param("id")
-    if err := h.UserService.DeactivateUser(c.Request().Context(), id); err != nil {
+func (h *UserAPI) DeactivateUser(c echo.Context) error {
+    userId := c.Param("uid")
+    uid, _ := strconv.ParseUint(userId, 10, 64)
+
+    if err := h.userApp.DeactivateUser(c.Request().Context(), uid); err != nil {
         return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
     return c.NoContent(http.StatusNoContent)
