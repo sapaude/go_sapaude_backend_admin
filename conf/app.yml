@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  address: 127.0.0.1:8087
 
 jwt:
   secret: "your_jwt_secret"
   expiration_minutes: 60
 
 database:
-  dsn: "user:password@tcp(127.0.0.1:3306)/user_admin?charset=utf8mb4&parseTime=True&loc=Local"
+  dsn: "sapaude_rw_acc:SghK%h123.@tcp(127.0.0.1:3306)/sapaude_db?charset=utf8mb4&parseTime=True&loc=Local"

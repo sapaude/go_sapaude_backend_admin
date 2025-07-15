@@ -6,6 +6,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/wire v0.6.0
 	github.com/labstack/echo/v4 v4.13.4
+	github.com/sapaude/go-shims/shim v0.0.0-20250711130206-cfba225a8dca
 	github.com/sapaude/go-shims/x/log v0.0.0-20250711130206-cfba225a8dca
 	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/crypto v0.38.0
@@ -23,6 +24,7 @@ require (
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/net v0.40.0 // indirect
@@ -31,3 +33,7 @@ require (
 	golang.org/x/time v0.11.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
+
+replace github.com/sapaude/go-shims/x/log => /private/data/projects/github.com/sapadue/go-shims/x/log
+
+replace github.com/sapaude/go-shims/shim => /private/data/projects/github.com/sapadue/go-shims/shim
